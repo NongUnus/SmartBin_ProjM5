@@ -8,6 +8,7 @@ const int servoPin = 5;
 const int openAngle = 90;
 const int closedAngle = 0;
 const int threshold = 100;
+bool currentStatus = false;
 void openLid() {
     lid.write(openAngle);
 }
@@ -17,28 +18,37 @@ void closeLid() {
 void setup() {
     Serial.begin(115200);
     Wire.begin();
+    sensor.setTimeout(500);
     if(!sensor.init()) {
         Serial.println("Failed to detect and initialize sensor!");
-        while(1);
     }
     sensor.setDistanceMode(VL53L1X::Short);
     sensor.setMeasurementTimingBudget(50000);
     sensor.startContinuous(50);
     lid.attach(servoPin);
+    lid.write(closedAngle);
     closeLid();
 }
 void loop() {
     int distance = sensor.read();
-    if (distance == 0 || distance > 4000) {
-        Serial.println("Sensor Error / Out of Range");
-    }else {
+    if (sensor.timeoutOccurred()) {
+        Serial.println("TIMEOUT!");
+        return;
+    }
+    if (distance > 0 && distance < 2000) {
         Serial.print("Distance (mm): ");
         Serial.println(distance);
-        if(distance < threshold) {
-            openLid();
-        }else {
-            closeLid();
+        if(distance < threshold && currentStatus == false) {
+            lid.write(openAngle);
+            currentStatus = true;
+            Serial.println("Action: Opening...");
+            delay(500); 
+        }else if(distance >= threshold && currentStatus == true) {
+            lid.write(closedAngle);
+            currentStatus = false;
+            Serial.println("Action: Closing...");
+            delay(500);
         }
     }
-    delay(50);
+    delay(100);
 }
