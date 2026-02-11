@@ -15,6 +15,20 @@ void openLid() {
 void closeLid() {
     lid.write(closedAngle);
 }
+void moveServo(int target) {
+    int current = lid.read();
+    if (current < target) {
+        for (int pos = current; pos <= target; pos++) {
+            lid.write(pos);
+            delay(15);
+        }
+    } else {
+        for (int pos = current; pos >= target; pos--) {
+            lid.write(pos);
+            delay(15);
+        }
+    }
+}
 void setup() {
     Serial.begin(115200);
     Wire.begin();
@@ -26,8 +40,6 @@ void setup() {
     sensor.setMeasurementTimingBudget(50000);
     sensor.startContinuous(50);
     lid.attach(servoPin);
-    lid.write(closedAngle);
-    closeLid();
 }
 void loop() {
     int distance = sensor.read();
@@ -39,15 +51,16 @@ void loop() {
         Serial.print("Distance (mm): ");
         Serial.println(distance);
         if(distance < threshold && currentStatus == false) {
-            lid.write(openAngle);
+            moveServo(openAngle);
             currentStatus = true;
             Serial.println("Action: Opening...");
             delay(500); 
         }else if(distance >= threshold && currentStatus == true) {
-            lid.write(closedAngle);
+            Serial.println("Action: Waiting...");
+            delay(3000);
+            moveServo(closedAngle);
             currentStatus = false;
             Serial.println("Action: Closing...");
-            delay(500);
         }
     }
     delay(100);
