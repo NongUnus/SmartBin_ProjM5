@@ -5,31 +5,33 @@
 VL53L1X sensor;
 Servo lid;
 const int servoPin = 5;
-const int openAngle = 90;
-const int closedAngle = 0;
-const int threshold = 100;
-bool currentStatus = false;
-unsigned long lastDetectedTime = 0; 
-const unsigned long delayBeforeClose = 3000;
+const int openAngle = 0;
+const int closedAngle = 90;
+const int threshold = 250; 
+bool currentStatus = false; 
+const unsigned long delayBeforeClose = 6000;
+unsigned long openTime = 0;
+int currentAngle = closedAngle;
+unsigned long detectStart = 0;
 void openLid() {
-    lid.write(openAngle);
-}
-void closeLid() {
     lid.write(closedAngle);
 }
+void closeLid() {
+    lid.write(openAngle);
+}
 void moveServo(int target) {
-    int current = lid.read();
-    if (current < target) {
-        for (int pos = current; pos <= target; pos++) {
+     if (currentAngle < target) {
+        for (int pos = currentAngle; pos <= target; pos++) {
             lid.write(pos);
             delay(15);
         }
     } else {
-        for (int pos = current; pos >= target; pos--) {
+        for (int pos = currentAngle; pos >= target; pos--) {
             lid.write(pos);
             delay(15);
         }
     }
+    currentAngle = target;
 }
 void setup() {
     Serial.begin(115200);
@@ -39,36 +41,35 @@ void setup() {
         Serial.println("Failed to detect and initialize sensor!");
     }
     sensor.setDistanceMode(VL53L1X::Short);
+    sensor.setROISize(8, 8);
     sensor.setMeasurementTimingBudget(50000);
     sensor.startContinuous(50);
     lid.attach(servoPin, 600, 2400);
     lid.write(closedAngle);
+    currentAngle = closedAngle;
     delay(500);
 }
 void loop() {
     int distance = sensor.read();
-    if (sensor.timeoutOccurred()) {
-        Serial.println("TIMEOUT!");
-        return;
-    }
-    if (distance > 0 && distance < 2000) {
-        if (distance < threshold) {
-            lastDetectedTime = millis();            
-            if (currentStatus == false) {
-                Serial.print("Distance (mm): ");
-                Serial.println(distance);
-                Serial.println("Action: Opening...");
-                moveServo(openAngle);
-                currentStatus = true;
-            }
-        } 
-        else if (distance >= threshold && currentStatus == true) {
-            if (millis() - lastDetectedTime >= delayBeforeClose) {
-                Serial.println("Action: Closing...");
-                moveServo(closedAngle);
-                currentStatus = false;
-            }
+    if (sensor.timeoutOccurred()) return;
+    if (distance <= 0) return;
+    if (!currentStatus) {
+    if (distance < threshold) {
+        if (detectStart == 0) detectStart = millis();    
+        if (millis() - detectStart > 150) {
+            Serial.println("Opening...");
+            moveServo(openAngle);
+            currentStatus = true;
+            openTime = millis();
+            detectStart = 0;
+        }
+        } else {
+            detectStart = 0;
         }
     }
-    delay(50); 
+    if (currentStatus && millis() - openTime >= delayBeforeClose) {
+        Serial.println("Closing...");
+        moveServo(closedAngle);
+        currentStatus = false;
+    }
 }
