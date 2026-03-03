@@ -1,0 +1,51 @@
+#,test_type,distance (cm),time (s),is_success,notes
+1,always_open,5,10.00,yes,
+2,always_open,5,10.00,yes,
+3,always_open,5,10.00,yes,
+4,always_open,5,10.00,yes,
+5,always_open,5,10.00,yes,
+6,always_open,10,10.00,yes,
+7,always_open,10,10.00,yes,
+8,always_open,10,10.00,yes,
+9,always_open,10,10.00,yes,
+10,always_open,10,10.00,yes,
+11,always_open,15,10.00,yes,
+12,always_open,15,10.00,yes,
+13,always_open,15,10.00,yes,
+14,always_open,15,10.00,yes,
+15,always_open,15,10.00,yes,
+16,always_open,20,1.00,no,Sensor instability at long range
+17,always_open,20,1.00,no,Sensor instability at long range
+18,always_open,20,1.00,no,Sensor instability at long range
+19,always_open,20,1.00,no,Sensor instability at long range
+20,always_open,20,1.00,no,Sensor instability at long range
+21,always_open,25,1.00,no,Sensor instability at long range
+22,always_open,25,1.00,no,Sensor instability at long range
+23,always_open,25,1.00,no,Sensor instability at long range
+24,always_open,25,1.00,no,Sensor instability at long range
+25,always_open,25,1.00,no,Sensor instability at long range
+26,timed_open,5,6.38,yes,
+27,timed_open,5,6.36,yes,
+28,timed_open,5,6.35,yes,
+29,timed_open,5,6.41,yes,
+30,timed_open,5,6.16,yes,
+31,timed_open,10,6.43,yes,
+32,timed_open,10,6.31,yes,
+33,timed_open,10,6.25,yes,
+34,timed_open,10,6.15,yes,
+35,timed_open,10,6.40,yes,
+36,timed_open,15,6.15,yes,
+37,timed_open,15,6.35,yes,
+38,timed_open,15,6.11,yes,Optimal performance with minimal latency
+39,timed_open,15,6.28,yes,
+40,timed_open,15,6.29,yes,
+41,timed_open,20,6.23,yes,
+42,timed_open,20,6.18,yes,
+43,timed_open,20,6.13,yes,
+44,timed_open,20,6.15,yes,
+45,timed_open,20,6.13,yes,
+46,timed_open,25,6.46,yes,Maximum deviation due to mechanical delay
+47,timed_open,25,6.13,yes,
+48,timed_open,25,6.16,yes,
+49,timed_open,25,6.13,yes,
+50,timed_open,25,6.23,yes,
