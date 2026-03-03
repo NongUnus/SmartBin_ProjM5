@@ -13,12 +13,6 @@ const unsigned long delayBeforeClose = 6000;
 unsigned long openTime = 0;
 int currentAngle = closedAngle;
 unsigned long detectStart = 0;
-void openLid() {
-    lid.write(closedAngle);
-}
-void closeLid() {
-    lid.write(openAngle);
-}
 void moveServo(int target) {
      if (currentAngle < target) {
         for (int pos = currentAngle; pos <= target; pos++) {
